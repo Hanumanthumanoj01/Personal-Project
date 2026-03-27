@@ -409,12 +409,9 @@ footer{ position:relative;z-index:2;text-align:center;padding:8rem 1.5rem 6rem; 
 
 <div id="scroll-progress"></div>
 
-<div id="yt-hidden">
-  <iframe id="yt-player" width="1" height="1"
-    src="https://www.youtube.com/embed/HqUeSjsYLNU?enablejsapi=1&loop=1&playlist=HqUeSjsYLNU"
-    frameborder="0" allow="autoplay" title="music">
-  </iframe>
-</div>
+<audio id="bg-music" loop>
+  <source src="static/music.mp3.mpeg" type="audio/mpeg">
+</audio>
 
 <div id="lightbox">
   <span id="lb-close">✕</span>
@@ -455,7 +452,7 @@ footer{ position:relative;z-index:2;text-align:center;padding:8rem 1.5rem 6rem; 
       Do you remember what happened tonight,<br/>two years ago?
     </h1>
     <p class="gate-sub">At a quiet hour, when the world was fast asleep…</p>
-    <button class="gate-enter-btn magnetic" id="enter-btn">Enter ↓</button>
+    <button class="gate-enter-btn magnetic" id="enter-btn">Let's Find Out ↓</button>
     <span class="gate-hint">tap to open</span>
   </div>
 </div>
@@ -668,6 +665,10 @@ footer{ position:relative;z-index:2;text-align:center;padding:8rem 1.5rem 6rem; 
 <script>
 /* 1. THEATER GATE TRIGGER */
 document.getElementById('enter-btn').addEventListener('click',function(){
+audio.play();
+isPlaying = true;
+btn.textContent = '⏸';
+vinyl.classList.add('playing');
   document.getElementById('gate').classList.add('gone');
   setTimeout(()=>{document.getElementById('gate').style.display='none';}, 1600);
 
@@ -850,14 +851,25 @@ animateFw();
 })();
 
 /* 12. MUSIC PLAYER */
-let isPlaying=false; const player=document.getElementById('yt-player');
-const btn=document.getElementById('music-btn'); const vinyl=document.getElementById('vinyl-disc');
-function ytCmd(fn){ player.contentWindow.postMessage(JSON.stringify({event:'command',func:fn,args:[]}),'*'); }
-btn.addEventListener('click',function(){
+let isPlaying = false;
+const audio = document.getElementById('bg-music');
+const btn = document.getElementById('music-btn');
+const vinyl = document.getElementById('vinyl-disc');
+
+btn.addEventListener('click', function () {
   document.getElementById('music-toast').classList.remove('show');
-  if(!isPlaying){ytCmd('playVideo');btn.textContent='⏸';vinyl.classList.add('playing');}
-  else{ytCmd('pauseVideo');btn.textContent='▶';vinyl.classList.remove('playing');}
-  isPlaying=!isPlaying;
+
+  if (!isPlaying) {
+    audio.play();
+    btn.textContent = '⏸';
+    vinyl.classList.add('playing');
+  } else {
+    audio.pause();
+    btn.textContent = '▶';
+    vinyl.classList.remove('playing');
+  }
+
+  isPlaying = !isPlaying;
 });
 
 /* 13. SCROLL REVEAL */
